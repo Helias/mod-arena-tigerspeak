@@ -24,24 +24,20 @@ enum BattlegroundTTPObjects
     BG_TTP_OBJECT_TYPE_BUFF_2    = 184664
 };
 
-class BattlegroundTTP : public Battleground
+class AC_GAME_API BattlegroundTTP : public Arena
 {
 public:
     BattlegroundTTP();
     ~BattlegroundTTP();
 
     /* inherited from BattlegroundClass */
-    void AddPlayer(Player* player);
-    void StartingEventCloseDoors();
-    void StartingEventOpenDoors();
+    void StartingEventCloseDoors() override;
+    void StartingEventOpenDoors() override;
 
-    void RemovePlayer(Player* player);
-    void HandleAreaTrigger(Player* player, uint32 trigger);
-    bool SetupBattleground();
-    void Init();
-    void FillInitialWorldStates(WorldPacket &d);
-    void HandleKillPlayer(Player* player, Player* killer);
-    bool HandlePlayerUnderMap(Player* player);
+    void HandleAreaTrigger(Player* player, uint32 trigger) override;
+    bool SetupBattleground() override;
+    void FillInitialWorldStates(WorldPacket &d) override;
+    bool HandlePlayerUnderMap(Player* player) override;
 
     uint32 GetZoneId() const { return BATTLEGROUND_TTP_ZONEID; }
 

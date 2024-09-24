@@ -16,6 +16,7 @@
  */
 
 #include "Battleground.h"
+#include "Arena.h"
 #include "GameObject.h"
 #include "ObjectMgr.h"
 #include "Transport.h"
@@ -39,16 +40,6 @@ BattlegroundQueueTypeId BATTLEGROUND_QUEUE_TTP = BattlegroundQueueTypeId(0);
 BattlegroundTTP::BattlegroundTTP()
 {
     BgObjects.resize(BG_TTP_OBJECT_MAX);
-
-    StartDelayTimes[BG_STARTING_EVENT_FIRST]  = BG_START_DELAY_1M;
-    StartDelayTimes[BG_STARTING_EVENT_SECOND] = BG_START_DELAY_30S;
-    StartDelayTimes[BG_STARTING_EVENT_THIRD]  = BG_START_DELAY_15S;
-    StartDelayTimes[BG_STARTING_EVENT_FOURTH] = BG_START_DELAY_NONE;
-    //we must set messageIds
-    StartMessageIds[BG_STARTING_EVENT_FIRST]  = LANG_ARENA_ONE_MINUTE;
-    StartMessageIds[BG_STARTING_EVENT_SECOND] = LANG_ARENA_THIRTY_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_THIRD]  = LANG_ARENA_FIFTEEN_SECONDS;
-    StartMessageIds[BG_STARTING_EVENT_FOURTH] = LANG_ARENA_HAS_BEGUN;
 }
 
 BattlegroundTTP::~BattlegroundTTP() { }
@@ -68,38 +59,22 @@ void BattlegroundTTP::StartingEventOpenDoors()
         SpawnBGObject(i, 60);
 }
 
-void BattlegroundTTP::AddPlayer(Player* player)
-{
-    Battleground::AddPlayer(player);
-    PlayerScores[player->GetGUID()] = new BattlegroundScore(player);
-    Battleground::UpdateArenaWorldState();
-}
+// void BattlegroundTTP::HandleKillPlayer(Player* player, Player* killer)
+// {
+//     if (GetStatus() != STATUS_IN_PROGRESS)
+//         return;
 
-void BattlegroundTTP::RemovePlayer(Player* /*player*/)
-{
-    if (GetStatus() == STATUS_WAIT_LEAVE)
-        return;
+//     if (!killer)
+//     {
+//         sLog->outError("BattlegroundTTP: Killer player not found");
+//         return;
+//     }
 
-    Battleground::UpdateArenaWorldState();
-    CheckArenaWinConditions();
-}
+//     Battleground::HandleKillPlayer(player, killer);
 
-void BattlegroundTTP::HandleKillPlayer(Player* player, Player* killer)
-{
-    if (GetStatus() != STATUS_IN_PROGRESS)
-        return;
-
-    if (!killer)
-    {
-        sLog->outError("BattlegroundTTP: Killer player not found");
-        return;
-    }
-
-    Battleground::HandleKillPlayer(player, killer);
-
-    Battleground::UpdateArenaWorldState();
-    CheckArenaWinConditions();
-}
+//     Battleground::UpdateArenaWorldState();
+//     CheckArenaWinConditions();
+// }
 
 bool BattlegroundTTP::HandlePlayerUnderMap(Player* player)
 {
@@ -125,13 +100,7 @@ void BattlegroundTTP::HandleAreaTrigger(Player* /* player */, uint32 trigger)
 void BattlegroundTTP::FillInitialWorldStates(WorldPacket &data)
 {
     data << uint32(0xE1A) << uint32(1);
-    Battleground::UpdateArenaWorldState();
-}
-
-void BattlegroundTTP::Init()
-{
-    //call parent's class reset
-    Battleground::Init();
+    Arena::FillInitialWorldStates(data);
 }
 
 bool BattlegroundTTP::SetupBattleground()
@@ -143,7 +112,7 @@ bool BattlegroundTTP::SetupBattleground()
         || !AddObject(BG_TTP_OBJECT_BUFF_1, BG_TTP_OBJECT_TYPE_BUFF_1, 566.788f, 602.743f, 383.68f, 1.5724f, 0.0f, 0.0f, 0.707673f, 0.70654f, 120)
         || !AddObject(BG_TTP_OBJECT_BUFF_2, BG_TTP_OBJECT_TYPE_BUFF_2, 566.661f, 664.311f, 383.681f, 4.66374f, 0.0f, 0.0f, 0.724097f, -0.689698f, 120))
     {
-        sLog->outError("BattlegroundTTP: Failed to spawn some object!");
+        LOG_ERROR("sql.sql", "BattlegroundTTP: Failed to spawn some object!");
         return false;
     }
 
