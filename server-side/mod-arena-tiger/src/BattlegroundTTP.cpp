@@ -97,10 +97,10 @@ void BattlegroundTTP::HandleAreaTrigger(Player* /* player */, uint32 trigger)
     }
 }
 
-void BattlegroundTTP::FillInitialWorldStates(WorldPacket &data)
+void BattlegroundTTP::FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet)
 {
-    data << uint32(0xE1A) << uint32(1);
-    Arena::FillInitialWorldStates(data);
+    packet.Worldstates.emplace_back(0xE1A, 1);
+    Arena::FillInitialWorldStates(packet);
 }
 
 bool BattlegroundTTP::SetupBattleground()
@@ -134,14 +134,14 @@ void AddTigerPeakScripts() {
 
 	BattlegroundMgr::bgTypeToTemplate[BATTLEGROUND_TTP] = [](Battleground *bg_t) -> Battleground * { return new BattlegroundTTP(*(BattlegroundTTP *)bg_t); };
 
-	Player::bgZoneIdToFillWorldStates[6732] = [](Battleground* bg, WorldPacket& data) {
+	Player::bgZoneIdToFillWorldStates[6732] = [](Battleground* bg, WorldPackets::WorldState::InitWorldStates& packet) {
     if (bg && bg->GetBgTypeID(true) == BATTLEGROUND_TTP)
-        bg->FillInitialWorldStates(data);
+        bg->FillInitialWorldStates(packet);
     else
     {
-        data << uint32(0xa0f) << uint32(0x0);           // 7
-        data << uint32(0xa10) << uint32(0x0);           // 8
-        data << uint32(0xa11) << uint32(0x0);           // 9 show
+        packet.Worldstates.emplace_back(0xa0f, 0x0);           // 7
+        packet.Worldstates.emplace_back(0xa10, 0x0);           // 8
+        packet.Worldstates.emplace_back(0xa11, 0x0);           // 9 show
     }
 	};
 }
