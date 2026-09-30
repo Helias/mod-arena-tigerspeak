@@ -1,3 +1,1 @@
 AC_ADD_SCRIPT("${CMAKE_CURRENT_LIST_DIR}/src/BattlegroundTTP.cpp")
-AC_ADD_SCRIPT_LOADER("TigerPeak" "${CMAKE_CURRENT_LIST_DIR}/src/loader.h")
-
