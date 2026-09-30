@@ -125,7 +125,7 @@ class TigerPeakWorld : public WorldScript
     	TigerPeakWorld() : WorldScript("TigerPeakWorld") { }
 };
 
-void AddTigerPeakScripts() {
+void Addmod_arena_tigerScripts() {
 	new TigerPeakWorld();
 
 	// Add Tol Viron to battleground list
